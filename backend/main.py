@@ -207,7 +207,7 @@ if not cors_origins:
     cors_origins = [
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://integ-mundial.vercel.app",
+        "https://pnp-quiniela.vercel.app",
     ]
 
 app.add_middleware(
