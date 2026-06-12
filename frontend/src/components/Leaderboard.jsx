@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from "react";
-import {getLeaderboard, getChampionPrediction} from "../api";
+import {getLeaderboard} from "../api";
 
 function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
-  const [champions, setChampions] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,27 +12,7 @@ function Leaderboard() {
   const loadLeaderboard = async () => {
     try {
       const response = await getLeaderboard();
-      // Filtrar administradores
-      const filtered = Array.isArray(response.data)
-        ? response.data.filter((entry) => !entry.is_admin)
-        : [];
-      setLeaderboard(filtered);
-      // Fetch champion predictions for each user
-      const championResults = await Promise.all(
-        filtered.map(async (entry) => {
-          try {
-            const res = await getChampionPrediction(entry.id);
-            return {userId: entry.id, team: res.data.team};
-          } catch {
-            return {userId: entry.id, team: null};
-          }
-        }),
-      );
-      const championMap = {};
-      championResults.forEach((c) => {
-        championMap[c.userId] = c.team;
-      });
-      setChampions(championMap);
+      setLeaderboard(Array.isArray(response.data) ? response.data : []);
       setLoading(false);
     } catch (err) {
       console.error("Error loading leaderboard:", err);
@@ -127,10 +106,10 @@ function Leaderboard() {
                     </td>
                     <td className="text-center py-4 px-6">
                       <span className="font-bold text-yellow-300">
-                        {champions[entry.id] ? (
+                        {entry.champion ? (
                           <>
                             <span className="text-2xl mr-1">👑</span>
-                            {champions[entry.id]}
+                            {entry.champion}
                           </>
                         ) : (
                           <span className="text-slate-500 italic">-</span>
