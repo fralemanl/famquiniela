@@ -117,6 +117,10 @@ class AdjustPointsRequest(BaseModel):
     new_points: int
     admin_user_id: int
 
+class ChampionPredictionUpdate(BaseModel):
+    team: str
+    admin_user_id: int
+
 # Endpoint para ajustar manualmente los puntos de una predicción
 
 # ...existing code...
@@ -289,6 +293,31 @@ def get_champion_prediction(user_id: int, db: Session = Depends(get_db)):
     champion = db.query(ChampionPrediction).filter(ChampionPrediction.user_id == user_id).first()
     if not champion:
         raise HTTPException(status_code=404, detail="Predicción de campeón no encontrada")
+    return champion
+
+@app.put("/api/champion/{user_id}", response_model=ChampionPredictionResponse)
+def update_champion_prediction(user_id: int, champion_update: ChampionPredictionUpdate, db: Session = Depends(get_db)):
+    admin_user = db.query(User).filter(
+        User.id == champion_update.admin_user_id,
+        User.is_admin == True,
+    ).first()
+    if not admin_user:
+        raise HTTPException(status_code=403, detail="Solo un administrador puede cambiar la predicción de campeón.")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    champion = db.query(ChampionPrediction).filter(ChampionPrediction.user_id == user_id).first()
+    if champion:
+        champion.team = champion_update.team
+    else:
+        champion = ChampionPrediction(user_id=user_id, team=champion_update.team)
+        db.add(champion)
+
+    db.commit()
+    db.refresh(champion)
+    invalidate_leaderboard_cache()
     return champion
 
 # Dependency
