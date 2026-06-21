@@ -257,6 +257,8 @@ function Predictions({user}) {
             {sortedPredictions.map((prediction) => {
               const match = getMatchById(prediction.match_id);
               if (!match) return null;
+              const hasCalculatedPoints =
+                prediction.points !== null && prediction.points !== undefined;
 
               return (
                 <div
@@ -268,8 +270,9 @@ function Predictions({user}) {
                     <span className="text-xs text-slate-400 font-bold uppercase">
                       {getPhaseLabelInEnglish(match.phase)}
                     </span>
-                    <span className="text-xs text-slate-400 font-bold">
-                      {match.stadium || ""}
+                    <span className="text-xs text-slate-400 font-bold text-right">
+                      {match.stadium || "Sin estadio"}
+                      {hasCalculatedPoints ? ` · ${prediction.points} pts` : ""}
                     </span>
                   </div>
 
