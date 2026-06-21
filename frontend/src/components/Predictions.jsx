@@ -270,10 +270,16 @@ function Predictions({user}) {
                     <span className="text-xs text-slate-400 font-bold uppercase">
                       {getPhaseLabelInEnglish(match.phase)}
                     </span>
-                    <span className="text-xs text-slate-400 font-bold text-right">
-                      {match.stadium || "Sin estadio"}
-                      {hasCalculatedPoints ? ` · ${prediction.points} pts` : ""}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-400 font-bold text-right">
+                        {match.stadium || "Sin estadio"}
+                      </span>
+                      {hasCalculatedPoints && (
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
+                          {prediction.points} pts
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Fila 2: equipos y predicción */}
