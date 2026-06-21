@@ -275,7 +275,13 @@ function Predictions({user}) {
                         {match.stadium || "Sin estadio"}
                       </span>
                       {hasCalculatedPoints && (
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-xs font-black ${
+                            match.is_finished
+                              ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300"
+                              : "bg-yellow-500/20 border border-yellow-500/40 text-yellow-300"
+                          }`}
+                        >
                           {prediction.points} pts
                         </span>
                       )}
